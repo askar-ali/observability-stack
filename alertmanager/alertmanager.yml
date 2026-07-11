@@ -1,0 +1,22 @@
+# Reduce alert fatigue: group, wait, and inhibit warnings when a critical is firing.
+route:
+  receiver: default
+  group_by: [alertname, instance]
+  group_wait: 30s
+  group_interval: 5m
+  repeat_interval: 4h
+  routes:
+    - matchers: [severity="critical"]
+      receiver: pager
+      repeat_interval: 1h
+
+inhibit_rules:
+  - source_matchers: [severity="critical"]
+    target_matchers: [severity="warning"]
+    equal: [instance]
+
+receivers:
+  - name: default
+  - name: pager
+    pagerduty_configs:
+      - routing_key_file: /etc/alertmanager/pagerduty.key   # mount a secret here
