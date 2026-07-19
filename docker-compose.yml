@@ -15,6 +15,17 @@ services:
     pid: host
     volumes: ["/:/host:ro,rslave"]
     command: ["--path.rootfs=/host"]
+  blackbox:
+    image: prom/blackbox-exporter:v0.25.0
+    volumes:
+      - ./blackbox/blackbox.yml:/etc/blackbox_exporter/config.yml:ro
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:v0.49.1
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
   grafana:
     image: grafana/grafana:11.2.0
     environment:
