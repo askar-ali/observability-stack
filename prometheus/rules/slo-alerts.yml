@@ -1,0 +1,14 @@
+# Multi-window burn-rate alerts for a 99.9% availability SLO (http_requests_total).
+groups:
+  - name: slo-availability
+    rules:
+      - record: job:http_error_ratio:rate5m
+        expr: sum by (job) (rate(http_requests_total{code=~"5.."}[5m])) / sum by (job) (rate(http_requests_total[5m]))
+      - record: job:http_error_ratio:rate1h
+        expr: sum by (job) (rate(http_requests_total{code=~"5.."}[1h])) / sum by (job) (rate(http_requests_total[1h]))
+      - alert: ErrorBudgetFastBurn
+        expr: job:http_error_ratio:rate5m > (14.4 * 0.001) and job:http_error_ratio:rate1h > (14.4 * 0.001)
+        for: 2m
+        labels: { severity: critical }
+        annotations:
+          summary: "{{ $labels.job }} is burning its error budget 14x too fast"
