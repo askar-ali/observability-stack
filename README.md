@@ -31,3 +31,7 @@ docker compose up -d
 export DD_API_KEY=... DD_APP_KEY=... PAGERDUTY_TOKEN=...
 cd terraform && terraform init && terraform plan
 ```
+
+## Checks
+
+`make check` (promtool config, rules and unit tests), `make tf-validate`. See `docs/slo.md`.
